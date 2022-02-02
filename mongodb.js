@@ -12,5 +12,15 @@ MongoClient.connect(connectionURL, { useNewParser: true }, (error, client) => {
 
     // gives us a db reference to our db name.
     const db = client.db(databaseName);
+
+    db.collection("users")
+        .deleteOne({
+            name: "Jedi",
+        })
+        .then((result) => {
+            console.log(result);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
 });
-3;
