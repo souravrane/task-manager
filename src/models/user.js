@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
-// this is a model for the user collection.
-const User = mongoose.model("User", {
+const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -41,5 +41,20 @@ const User = mongoose.model("User", {
         },
     },
 });
+
+// middleware methods : pre is used to process data before saving
+// this has to be a normal function and not arrow function!!
+userSchema.pre("save", async function (next) {
+    const user = this;
+
+    if (user.isModified("password")) {
+        user.password = await bcrypt.hash(user.password, 8);
+    }
+
+    next();
+});
+
+// this is a model for the user collection.
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

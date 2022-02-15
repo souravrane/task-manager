@@ -9,7 +9,6 @@ const port = process.env.PORT || 3000;
 
 // this parses the request to json
 app.use(express.json());
-
 app.use(userRouter);
 app.use(taskRouter);
 
