@@ -4,6 +4,7 @@ const auth = require("../middleware/auth");
 
 const router = new express.Router();
 
+// registering a new user
 router.post("/users", async (req, res) => {
     const user = new User(req.body);
     try {
@@ -15,6 +16,7 @@ router.post("/users", async (req, res) => {
     }
 });
 
+// user login
 router.post("/users/login", async (req, res) => {
     try {
         // user defined functions on models
@@ -26,6 +28,30 @@ router.post("/users/login", async (req, res) => {
         res.send({ user, token });
     } catch (e) {
         console.log(e);
+        res.status(500).send(e);
+    }
+});
+
+// user logout
+router.get("/users/logout", auth, async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter(
+            (token) => token.token !== req.token
+        );
+        await req.user.save();
+        res.send();
+    } catch (e) {
+        res.status(500).send();
+    }
+});
+
+// logout all the user sessions
+router.post("/users/logoutAll", auth, async (req, res) => {
+    try {
+        req.user.tokens = [];
+        await req.user.save();
+        res.send();
+    } catch (e) {
         res.status(500).send(e);
     }
 });
